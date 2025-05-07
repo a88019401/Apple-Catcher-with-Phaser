@@ -8,14 +8,11 @@ const sizes = {
 
 const speedDown = 300;
 
-const gameStartDiv = document.querySelector('#gameStartDiv');
-const gameStartBtn = document.querySelector('#gameStartBtn');
-const gameEndDiv = document.querySelector('#gameEndDiv');
-const gameWinLoseSpan = document.querySelector('#gameWinLoseSpan');
-const gameEndScoreSpan = document.querySelector('#gameEndScoreSpan');
-
-
-
+const gameStartDiv = document.querySelector("#gameStartDiv");
+const gameStartBtn = document.querySelector("#gameStartBtn");
+const gameEndDiv = document.querySelector("#gameEndDiv");
+const gameWinLoseSpan = document.querySelector("#gameWinLoseSpan");
+const gameEndScoreSpan = document.querySelector("#gameEndScoreSpan");
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -65,6 +62,14 @@ class GameScene extends Phaser.Scene {
         this.player.width / 10,
         this.player.height - this.player.height / 10
       );
+    // 支援手機滑動控制籃子位置
+    this.input.on("pointermove", (pointer) => {
+      this.player.x = Phaser.Math.Clamp(
+        pointer.x,
+        0,
+        sizes.width - this.player.width
+      );
+    });
 
     this.target = this.physics.add.image(0, 0, "apple").setOrigin(0, 0);
     this.target.setMaxVelocity(0, speedDown);
@@ -130,15 +135,15 @@ class GameScene extends Phaser.Scene {
   }
   gameOver() {
     this.sys.game.destroy(true);
-    if(this.points >=10){
+    if (this.points >= 10) {
       gameEndScoreSpan.textContent = this.points;
-      gameWinLoseSpan.textContent = "Win!"
-    }else{
+      gameWinLoseSpan.textContent = "Win!";
+    } else {
       gameEndScoreSpan.textContent = this.points;
       gameWinLoseSpan.textContent = "Lose!";
-    }gameEndDiv.style.display="flex"
-  }  
-
+    }
+    gameEndDiv.style.display = "flex";
+  }
 }
 
 const config = {
@@ -158,8 +163,7 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-
-gameStartBtn.addEventListener("click",()=>{
-  gameStartDiv.style.display="none";
+gameStartBtn.addEventListener("click", () => {
+  gameStartDiv.style.display = "none";
   game.scene.resume("scene-game");
-})
+});
